@@ -68,3 +68,43 @@ Para executar:
 docker run -dti -p 80:80 --name apache-A debian-apache:1.0
 ```
 
+#### Imagem de uma linguagem de Programação
+
+##### Python
+
+```
+FROM python
+
+WORKDIR /opt/app
+
+COPY app.py /opt/app/app.py
+
+CMD ["python", "./app.py"]
+```
+
+### Dockerfile Multi Estágio
+
+#### Golang sobre Alpine
+
+```
+FROM golang as exec
+
+COPY app.go /go/src/app/
+
+ENV GO111MODULE=auto
+
+WORKDIR /go/src/app/
+
+RUN go build -o app.go .
+
+FROM alpine
+
+WORKDIR /appexec
+
+COPY --from=exec /go/src/app /appexec
+
+RUN chmod -R 755 /appexec
+
+ENTRYPOINT ./app.go
+```
+
